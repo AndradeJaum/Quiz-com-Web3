@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import { questions } from "./questions";
 import { useState } from "react";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -8,29 +9,30 @@ export default function Home(): JSX.Element {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [quizStarted, setQuizStarted] = useState(false);
+  const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
 
   const handleOptionSelect = (option: string): void => {
     setSelectedOption(option);
   };
 
-  function handleNextQuestion(questionIndex: number, optionIndex: number) {
+  function handleValidateAnswer(questionIndex: number, optionIndex: number) {
     const currentQuestion = questions[questionIndex];
     const correctAnswerIndex: number = currentQuestion.correctIndex;
-    // Lógica para verificar se a resposta está correta e fazer a transição para a próxima pergunta
+
     if (optionIndex === correctAnswerIndex) {
-      console.log("correto");
-      // Lógica para a resposta correta
+      setIsAnswerCorrect(true);
       setSelectedOption(null);
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // Lógica para a resposta incorreta
-      console.log("false");
-      setQuizStarted(false);
+      setIsAnswerCorrect(false);
+      setCurrentQuestionIndex(0);
+      setSelectedOption(null);
     }
   }
 
   function handleStartQuiz(): void {
     setQuizStarted(true);
+    setIsAnswerCorrect(null);
   }
 
   return (
@@ -38,33 +40,48 @@ export default function Home(): JSX.Element {
       <header className="bg-purple w-full p-8 border-b border-purpleHover">
         <nav className="flex gap-4 list-none justify-center">
           <li className="text-lg font-semibold hover:border-b hover:border-b-purpleHover">
-            LINKEDIN
+            <Link href="/">HOME</Link>
           </li>
           <li className="text-lg font-semibold hover:border-b hover:border-b-purpleHover">
-            REPOSITÓRIO
+            <Link href="https://www.linkedin.com/in/joao-vitorandrade/">
+              LINKEDIN
+            </Link>
+          </li>
+          <li className="text-lg font-semibold hover:border-b hover:border-b-purpleHover">
+            <Link href="https://github.com/AndradeJaum/Quiz-com-Web3">
+              REPOSITÓRIO
+            </Link>
           </li>
         </nav>
       </header>
       <section className="my-12">
         <div className="my-8 bg-purple w-1/2 p-8 rounded-md mx-auto">
-          <div className="flex flex-col items-center">
-            <h1 className="text-3xl font-bold mb-4">QUIZ DO MILHÃO</h1>
-            <p className="text-lg mb-4">
-              Responda todas as perguntas corretamente para ganhar um token
-            </p>
-            <button
-              className="border-2 border-green text-green hover:bg-purpleHover hover:text-purple font-bold py-2 px-4 rounded"
-              onClick={handleStartQuiz}
-            >
-              START
-            </button>
-          </div>
-          {quizStarted == true ? (
+          {!quizStarted ? (
+            <div className="flex flex-col items-center">
+              <h1 className="text-3xl font-bold mb-4">QUIZ DO MILHÃO</h1>
+              <p className="text-lg mb-4">
+                Responda todas as perguntas corretamente para ganhar um token
+              </p>
+              {isAnswerCorrect === false && (
+                <p className="text-red-500 mb-4">
+                  Resposta incorreta. Tente novamente.
+                </p>
+              )}
+              <button
+                className="border-2 border-green text-green hover:bg-purpleHover hover:text-purple font-bold py-2 px-4 rounded"
+                onClick={handleStartQuiz}
+              >
+                START
+              </button>
+            </div>
+          ) : (
             <div className="flex flex-col ">
-              <h2 className="text-xl font-bold mb-4">Perguntas</h2>
+              <p className="mb-4"></p>
+              <h2 className="text-2xl font-bold mb-4">Perguntas</h2>
+
               {currentQuestionIndex < questions.length ? (
                 <>
-                  <p className="text-lg mb-4">
+                  <p className="mb-4">
                     {questions[currentQuestionIndex].question}
                   </p>
                   <ul className="flex flex-col gap-4">
@@ -86,19 +103,18 @@ export default function Home(): JSX.Element {
                   </ul>
                   <button
                     className={`border-2 border-green text-green hover:bg-purpleHover hover:text-purple font-bold py-2 px-4 rounded mt-4 ${
-                      selectedOption !== null
-                        ? ""
-                        : "opacity-50 cursor-not-allowed"
+                      selectedOption ? "" : "opacity-50 cursor-not-allowed"
                     }`}
-                    onClick={() =>
-                      handleNextQuestion(
+                    onClick={() => {
+                      handleValidateAnswer(
                         currentQuestionIndex,
                         questions[currentQuestionIndex].options.indexOf(
                           selectedOption
                         )
-                      )
-                    }
-                    disabled={!selectedOption === null}
+                      );
+                      setIsAnswerCorrect(null);
+                    }}
+                    disabled={!selectedOption}
                   >
                     PRÓXIMA PERGUNTA
                   </button>
@@ -107,8 +123,6 @@ export default function Home(): JSX.Element {
                 <p className="text-lg mb-4">Parabéns! Você concluiu o quiz.</p>
               )}
             </div>
-          ) : (
-            ""
           )}
         </div>
       </section>
