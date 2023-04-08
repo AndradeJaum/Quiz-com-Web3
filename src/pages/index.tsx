@@ -4,29 +4,32 @@ import { useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState(null);
+export default function Home(): JSX.Element {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [quizStarted, setQuizStarted] = useState(false);
 
-  const handleOptionSelect = (option) => {
+  const handleOptionSelect = (option: string): void => {
     setSelectedOption(option);
   };
 
-  function handleNextQuestion() {
+  function handleNextQuestion(questionIndex: number, optionIndex: number) {
+    const currentQuestion = questions[questionIndex];
+    const correctAnswerIndex: number = currentQuestion.correctIndex;
     // Lógica para verificar se a resposta está correta e fazer a transição para a próxima pergunta
-    if (selectedOption === questions[currentQuestionIndex].correctIndex) {
+    if (optionIndex === correctAnswerIndex) {
       console.log("correto");
       // Lógica para a resposta correta
+      setSelectedOption(null);
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       // Lógica para a resposta incorreta
       console.log("false");
+      setQuizStarted(false);
     }
-    setSelectedOption(null);
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
   }
 
-  function handleStartQuiz() {
+  function handleStartQuiz(): void {
     setQuizStarted(true);
   }
 
@@ -58,7 +61,7 @@ export default function Home() {
           </div>
           {quizStarted == true ? (
             <div className="flex flex-col ">
-              <h2 className="text-xl font-bold mb-4">Pergunta</h2>
+              <h2 className="text-xl font-bold mb-4">Perguntas</h2>
               {currentQuestionIndex < questions.length ? (
                 <>
                   <p className="text-lg mb-4">
@@ -83,10 +86,19 @@ export default function Home() {
                   </ul>
                   <button
                     className={`border-2 border-green text-green hover:bg-purpleHover hover:text-purple font-bold py-2 px-4 rounded mt-4 ${
-                      selectedOption ? "" : "opacity-50 cursor-not-allowed"
+                      selectedOption !== null
+                        ? ""
+                        : "opacity-50 cursor-not-allowed"
                     }`}
-                    onClick={handleNextQuestion}
-                    disabled={!selectedOption}
+                    onClick={() =>
+                      handleNextQuestion(
+                        currentQuestionIndex,
+                        questions[currentQuestionIndex].options.indexOf(
+                          selectedOption
+                        )
+                      )
+                    }
+                    disabled={!selectedOption === null}
                   >
                     PRÓXIMA PERGUNTA
                   </button>
