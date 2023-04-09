@@ -17,7 +17,7 @@ export default function Home(): JSX.Element {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [quizStarted, setQuizStarted] = useState(false);
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
-  const [showWrong, setShowWrong] = useState<boolean | null>(true);
+  const [showFailed, setShowFailed] = useState<boolean | null>(true);
   const [raffledItems, setRaffledItems] = useState<Raffle[]>([]);
 
   const handleOptionSelect = (option: string): void => {
@@ -59,7 +59,7 @@ export default function Home(): JSX.Element {
       setIsAnswerCorrect(false);
       setCurrentQuestionIndex(0);
       setSelectedOption(null);
-      setShowWrong(false);
+      setShowFailed(false);
       setQuizStarted(false);
     }
   }
@@ -94,7 +94,7 @@ export default function Home(): JSX.Element {
               <p className="text-lg mb-4">
                 Responda todas as perguntas corretamente para ganhar um token
               </p>
-              {!showWrong ? (
+              {!showFailed ? (
                 <p className="mb-4 text-center p-4 rounded bg-red">
                   Resposta Errada. Tente novamente
                 </p>
@@ -110,7 +110,12 @@ export default function Home(): JSX.Element {
             </div>
           ) : (
             <div className="flex flex-col ">
-              <h2 className="text-2xl font-bold mb-4">Perguntas</h2>
+              <div className="flex justify-between mb-4">
+                <h2 className="text-2xl font-bold">Perguntas</h2>
+                <p className="text-xs my-auto text-green">
+                  {currentQuestionIndex + 1} / {raffledItems.length}
+                </p>
+              </div>
 
               {currentQuestionIndex < raffledItems.length ? (
                 <>
