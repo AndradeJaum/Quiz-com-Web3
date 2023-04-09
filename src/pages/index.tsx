@@ -5,12 +5,20 @@ import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
+interface Raffle {
+  id: number;
+  question: string;
+  options: string[];
+  correctIndex: number;
+}
+
 export default function Home(): JSX.Element {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [quizStarted, setQuizStarted] = useState(false);
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
-  const [message, setMessage] = useState<boolean | null>(null);
+  const [showWrong, setShowWrong] = useState<boolean | null>(true);
+  const [raffledItems, setRaffledItems] = useState<Raffle[]>([]);
 
   const handleOptionSelect = (option: string): void => {
     setSelectedOption(option);
@@ -18,7 +26,7 @@ export default function Home(): JSX.Element {
 
   function handleStartQuiz(): void {
     const raffledItems = getRandonQuestions();
-    console.log(raffledItems);
+    setRaffledItems(raffledItems);
     setQuizStarted(true);
     setIsAnswerCorrect(null);
   }
@@ -40,19 +48,19 @@ export default function Home(): JSX.Element {
   }
 
   function handleValidateAnswer(questionIndex: number, optionIndex: number) {
-    const currentQuestion = questions[questionIndex];
+    const currentQuestion = raffledItems[questionIndex];
     const correctAnswerIndex: number = currentQuestion.correctIndex;
 
     if (optionIndex === correctAnswerIndex) {
       setIsAnswerCorrect(true);
       setSelectedOption(null);
       setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setMessage(true);
     } else {
       setIsAnswerCorrect(false);
       setCurrentQuestionIndex(0);
       setSelectedOption(null);
-      setMessage(false);
+      setShowWrong(false);
+      setQuizStarted(false);
     }
   }
 
@@ -61,15 +69,18 @@ export default function Home(): JSX.Element {
       <header className="bg-purple w-full p-8 border-b border-purpleHover">
         <nav className="flex gap-4 list-none justify-center">
           <li className="text-lg font-semibold hover:border-b hover:border-b-purpleHover">
-            <Link href="/">HOME</Link>
-          </li>
-          <li className="text-lg font-semibold hover:border-b hover:border-b-purpleHover">
-            <Link href="https://www.linkedin.com/in/joao-vitorandrade/">
+            <Link
+              href="https://www.linkedin.com/in/joao-vitorandrade/"
+              target="_blank"
+            >
               LINKEDIN
             </Link>
           </li>
           <li className="text-lg font-semibold hover:border-b hover:border-b-purpleHover">
-            <Link href="https://github.com/AndradeJaum/Quiz-com-Web3">
+            <Link
+              href="https://github.com/AndradeJaum/Quiz-com-Web3"
+              target="_blank"
+            >
               REPOSITÓRIO
             </Link>
           </li>
@@ -83,9 +94,9 @@ export default function Home(): JSX.Element {
               <p className="text-lg mb-4">
                 Responda todas as perguntas corretamente para ganhar um token
               </p>
-              {!message ? (
+              {!showWrong ? (
                 <p className="mb-4 text-center p-4 rounded bg-red">
-                  Resposta Errada. Mais sorte na próxima :)
+                  Resposta Errada. Tente novamente
                 </p>
               ) : (
                 ""
@@ -99,22 +110,15 @@ export default function Home(): JSX.Element {
             </div>
           ) : (
             <div className="flex flex-col ">
-              {message ? (
-                <p className="mb-4 text-center p-4 rounded bg-green text-purple font-medium">
-                  Resposta Correta!
-                </p>
-              ) : (
-                ""
-              )}
               <h2 className="text-2xl font-bold mb-4">Perguntas</h2>
 
-              {currentQuestionIndex < questions.length ? (
+              {currentQuestionIndex < raffledItems.length ? (
                 <>
                   <p className="mb-4">
-                    {questions[currentQuestionIndex].question}
+                    {raffledItems[currentQuestionIndex].question}
                   </p>
                   <ul className="flex flex-col gap-4">
-                    {questions[currentQuestionIndex].options.map(
+                    {raffledItems[currentQuestionIndex].options.map(
                       (option, index) => (
                         <li
                           key={index}
@@ -135,12 +139,15 @@ export default function Home(): JSX.Element {
                       selectedOption ? "" : "opacity-50 cursor-not-allowed"
                     }`}
                     onClick={() => {
-                      handleValidateAnswer(
-                        currentQuestionIndex,
-                        questions[currentQuestionIndex].options.indexOf(
-                          selectedOption
-                        )
-                      );
+                      if (selectedOption) {
+                        handleValidateAnswer(
+                          currentQuestionIndex,
+                          raffledItems[currentQuestionIndex].options.indexOf(
+                            selectedOption
+                          )
+                        );
+                        setSelectedOption(null);
+                      }
                       setIsAnswerCorrect(null);
                     }}
                     disabled={!selectedOption}
