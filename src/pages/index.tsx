@@ -10,10 +10,34 @@ export default function Home(): JSX.Element {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [quizStarted, setQuizStarted] = useState(false);
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
+  const [message, setMessage] = useState<boolean | null>(null);
 
   const handleOptionSelect = (option: string): void => {
     setSelectedOption(option);
   };
+
+  function handleStartQuiz(): void {
+    const raffledItems = getRandonQuestions();
+    console.log(raffledItems);
+    setQuizStarted(true);
+    setIsAnswerCorrect(null);
+  }
+
+  function getRandonQuestions() {
+    const raffle: {
+      id: number;
+      question: string;
+      options: string[];
+      correctIndex: number;
+    }[] = [];
+    while (raffle.length < 10) {
+      const randonItem = Math.floor(Math.random() * questions.length);
+      if (!raffle.includes(questions[randonItem])) {
+        raffle.push(questions[randonItem]);
+      }
+    }
+    return raffle;
+  }
 
   function handleValidateAnswer(questionIndex: number, optionIndex: number) {
     const currentQuestion = questions[questionIndex];
@@ -23,16 +47,13 @@ export default function Home(): JSX.Element {
       setIsAnswerCorrect(true);
       setSelectedOption(null);
       setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setMessage(true);
     } else {
       setIsAnswerCorrect(false);
       setCurrentQuestionIndex(0);
       setSelectedOption(null);
+      setMessage(false);
     }
-  }
-
-  function handleStartQuiz(): void {
-    setQuizStarted(true);
-    setIsAnswerCorrect(null);
   }
 
   return (
@@ -62,10 +83,12 @@ export default function Home(): JSX.Element {
               <p className="text-lg mb-4">
                 Responda todas as perguntas corretamente para ganhar um token
               </p>
-              {isAnswerCorrect === false && (
-                <p className="text-red-500 mb-4">
-                  Resposta incorreta. Tente novamente.
+              {!message ? (
+                <p className="mb-4 text-center p-4 rounded bg-red">
+                  Resposta Errada. Mais sorte na próxima :)
                 </p>
+              ) : (
+                ""
               )}
               <button
                 className="border-2 border-green text-green hover:bg-purpleHover hover:text-purple font-bold py-2 px-4 rounded"
@@ -76,7 +99,13 @@ export default function Home(): JSX.Element {
             </div>
           ) : (
             <div className="flex flex-col ">
-              <p className="mb-4"></p>
+              {message ? (
+                <p className="mb-4 text-center p-4 rounded bg-green text-purple font-medium">
+                  Resposta Correta!
+                </p>
+              ) : (
+                ""
+              )}
               <h2 className="text-2xl font-bold mb-4">Perguntas</h2>
 
               {currentQuestionIndex < questions.length ? (
