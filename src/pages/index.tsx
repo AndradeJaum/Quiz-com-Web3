@@ -161,7 +161,28 @@ export default function Home(): JSX.Element {
                   </button>
                 </>
               ) : (
-                <p className="text-lg mb-4">Parabéns! Você concluiu o quiz.</p>
+                <>
+                  <div className="border-b border-green w-full py-4 mb-4">
+                    <p className=" mb-4">Parabéns! Você concluiu o quiz.</p>
+                  </div>
+                  <form>
+                    <div>
+                      <p className="mb-4">
+                        Insira o endereço da sua carteira para receber o token
+                      </p>
+                      <input
+                        type="text"
+                        placeholder="Wallet address"
+                        className="w-full p-2 rounded outline-none bg-purple border border-green mb-4"
+                      />
+                    </div>
+                    <div className="flex justify-end">
+                      <button className="p-2 bg-green text-purple font-semibold hover:bg-purpleHover hover:scale-105 rounded">
+                        Receber
+                      </button>
+                    </div>
+                  </form>
+                </>
               )}
             </div>
           )}
