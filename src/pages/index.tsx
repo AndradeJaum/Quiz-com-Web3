@@ -1,7 +1,8 @@
 import { Inter } from "next/font/google";
 import { questions } from "./questions";
-import { useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { validateHeaderValue } from "http";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,8 @@ export default function Home(): JSX.Element {
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
   const [showFailed, setShowFailed] = useState<boolean | null>(true);
   const [raffledItems, setRaffledItems] = useState<Raffle[]>([]);
+  const [walletAddress, setWalletAddress] = useState<string>("");
+  const [walletButton, setWalletButon] = useState<boolean | null>(false);
 
   const handleOptionSelect = (option: string): void => {
     setSelectedOption(option);
@@ -63,6 +66,20 @@ export default function Home(): JSX.Element {
       setQuizStarted(false);
     }
   }
+
+  const handleValidateWallet: React.FormEventHandler<HTMLFormElement> = (
+    event
+  ) => {
+    event.preventDefault();
+    if (walletAddress.length !== 42) {
+      console.log("Não Enviei");
+      setWalletButon(false);
+    } else {
+      console.log("Enviei");
+      setWalletButon(true);
+      setWalletAddress("");
+    }
+  };
 
   return (
     <main className="bg-purpleDark w-screen min-h-screen">
@@ -162,10 +179,10 @@ export default function Home(): JSX.Element {
                 </>
               ) : (
                 <>
-                  <div className="border-b border-green w-full py-4 mb-4">
-                    <p className=" mb-4">Parabéns! Você concluiu o quiz.</p>
+                  <div className="border-b border-green w-full mb-8">
+                    <p className=" py-4">Parabéns! Você concluiu o quiz.</p>
                   </div>
-                  <form>
+                  <form onSubmit={handleValidateWallet}>
                     <div>
                       <p className="mb-4">
                         Insira o endereço da sua carteira para receber o token
@@ -174,10 +191,23 @@ export default function Home(): JSX.Element {
                         type="text"
                         placeholder="Wallet address"
                         className="w-full p-2 rounded outline-none bg-purple border border-green mb-4"
+                        value={walletAddress}
+                        onChange={(event) => {
+                          setWalletAddress(event.target.value);
+                          console.log(event.target.value);
+                        }}
                       />
                     </div>
                     <div className="flex justify-end">
-                      <button className="p-2 bg-green text-purple font-semibold hover:bg-purpleHover hover:scale-105 rounded">
+                      <button
+                        className={`p-2 bg-green text-purple font-semibold rounded ${
+                          !walletButton
+                            ? "opacity-50 cursor-not-allowed"
+                            : "opacity-100 cursor-pointer"
+                        }`}
+                        type="submit"
+                        disabled={walletAddress.length !== 42}
+                      >
                         Receber
                       </button>
                     </div>
