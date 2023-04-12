@@ -2,7 +2,6 @@ import { Inter } from "next/font/google";
 import { questions } from "./questions";
 import React, { useState } from "react";
 import Link from "next/link";
-import { validateHeaderValue } from "http";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,7 +12,7 @@ interface Raffle {
   correctIndex: number;
 }
 
-export default function Home(): JSX.Element {
+export default async function Home() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [quizStarted, setQuizStarted] = useState(false);
@@ -22,6 +21,7 @@ export default function Home(): JSX.Element {
   const [raffledItems, setRaffledItems] = useState<Raffle[]>([]);
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [walletButton, setWalletButon] = useState<boolean | null>(false);
+
 
   const handleOptionSelect = (option: string): void => {
     setSelectedOption(option);
