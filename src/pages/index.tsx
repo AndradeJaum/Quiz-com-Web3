@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import { questions } from "./questions";
 import React, { useState } from "react";
 import Link from "next/link";
+import postWalletAddress from "../lib/api.jsx";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,7 +13,7 @@ interface Raffle {
   correctIndex: number;
 }
 
-export default async function Home() {
+export default function Home() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [quizStarted, setQuizStarted] = useState(false);
@@ -22,6 +23,15 @@ export default async function Home() {
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [walletButton, setWalletButon] = useState<boolean | null>(false);
 
+  async function data() {
+    try {
+      // const wallet = await postWalletAddress(walletAddress);
+      await postWalletAddress({
+        wallet: walletAddress,
+      });
+      console.log(data);
+    } catch (error) {}
+  }
 
   const handleOptionSelect = (option: string): void => {
     setSelectedOption(option);
@@ -72,10 +82,10 @@ export default async function Home() {
   ) => {
     event.preventDefault();
     if (walletAddress.length !== 42) {
-      console.log("Não Enviei");
       setWalletButon(false);
     } else {
       console.log("Enviei");
+      data();
       setWalletButon(true);
       setWalletAddress("");
     }
@@ -130,7 +140,7 @@ export default async function Home() {
               <div className="flex justify-between mb-4">
                 <h2 className="text-2xl font-bold">Perguntas</h2>
                 <p className="text-xs my-auto text-green">
-                  {currentQuestionIndex + 1} / {raffledItems.length}
+                  {currentQuestionIndex} / {raffledItems.length}
                 </p>
               </div>
 
@@ -194,8 +204,8 @@ export default async function Home() {
                         value={walletAddress}
                         onChange={(event) => {
                           setWalletAddress(event.target.value);
-                          console.log(event.target.value);
                         }}
+                        required
                       />
                     </div>
                     <div className="flex justify-end">
