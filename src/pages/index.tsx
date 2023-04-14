@@ -24,13 +24,13 @@ export default function Home() {
   const [walletButton, setWalletButon] = useState<boolean | null>(false);
 
   async function data() {
-    try {
-      // const wallet = await postWalletAddress(walletAddress);
-      await postWalletAddress({
-        wallet: walletAddress,
-      });
-      console.log(data);
-    } catch (error) {}
+    // try {
+    //   const wallet = await postWalletAddress(walletAddress);
+    //   await postWalletAddress({
+    //     wallet: walletAddress,
+    //   });
+    //   console.log(data);
+    // } catch (error) {}
   }
 
   const handleOptionSelect = (option: string): void => {
@@ -85,6 +85,7 @@ export default function Home() {
       setWalletButon(false);
     } else {
       console.log("Enviei");
+      postWalletAddress( walletAddress );
       data();
       setWalletButon(true);
       setWalletAddress("");

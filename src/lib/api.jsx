@@ -1,5 +1,5 @@
 export default async function postWalletAddress(body) {
-  await fetch("http:// 54.87.81.27:8000/wallet", {
+  await fetch("http://localhost:3000/wallet", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
