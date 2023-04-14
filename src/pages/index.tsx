@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 import { questions } from "./questions";
 import React, { useState } from "react";
 import Link from "next/link";
-import postWalletAddress from "../lib/api.jsx";
+import { mintToken } from "../lib/api";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,16 +22,6 @@ export default function Home() {
   const [raffledItems, setRaffledItems] = useState<Raffle[]>([]);
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [walletButton, setWalletButon] = useState<boolean | null>(false);
-
-  async function data() {
-    // try {
-    //   const wallet = await postWalletAddress(walletAddress);
-    //   await postWalletAddress({
-    //     wallet: walletAddress,
-    //   });
-    //   console.log(data);
-    // } catch (error) {}
-  }
 
   const handleOptionSelect = (option: string): void => {
     setSelectedOption(option);
@@ -85,8 +75,8 @@ export default function Home() {
       setWalletButon(false);
     } else {
       console.log("Enviei");
-      postWalletAddress( walletAddress );
-      data();
+      mintToken(walletAddress);
+      console.log(walletAddress);
       setWalletButon(true);
       setWalletAddress("");
     }
