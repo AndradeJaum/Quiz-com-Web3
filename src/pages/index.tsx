@@ -22,6 +22,8 @@ export default function Home() {
   const [raffledItems, setRaffledItems] = useState<Raffle[]>([]);
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [walletButton, setWalletButon] = useState<boolean | null>(false);
+  const [isLoading, setIsLoading] = useState<boolean | null>(false);
+  const [hash, setHash] = useState<string>("");
 
   const handleOptionSelect = (option: string): void => {
     setSelectedOption(option);
@@ -67,7 +69,7 @@ export default function Home() {
     }
   }
 
-  const handleValidateWallet: React.FormEventHandler<HTMLFormElement> = (
+  const handleValidateWallet: React.FormEventHandler<HTMLFormElement> = async (
     event
   ) => {
     event.preventDefault();
@@ -75,10 +77,17 @@ export default function Home() {
       setWalletButon(false);
     } else {
       console.log("Enviei");
-      mintToken(walletAddress);
-      console.log(walletAddress);
-      setWalletButon(true);
-      setWalletAddress("");
+      try {
+        setIsLoading(true);
+        const res = await mintToken(walletAddress);
+        setHash(res.hash);
+        console.log(walletAddress);
+        setWalletButon(true);
+        setWalletAddress("");
+      } catch (error) {
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -200,17 +209,21 @@ export default function Home() {
                       />
                     </div>
                     <div className="flex justify-end">
-                      <button
-                        className={`p-2 bg-green text-purple font-semibold rounded ${
-                          !walletButton
-                            ? "opacity-50 cursor-not-allowed"
-                            : "opacity-100 cursor-pointer"
-                        }`}
-                        type="submit"
-                        disabled={walletAddress.length !== 42}
-                      >
-                        Receber
-                      </button>
+                      {!isLoading ? (
+                        <button
+                          className={`p-2 bg-green text-purple font-semibold rounded ${
+                            !walletButton
+                              ? "opacity-50 cursor-not-allowed"
+                              : "opacity-100 cursor-pointer"
+                          }`}
+                          type="submit"
+                          disabled={walletAddress.length !== 42}
+                        >
+                          Receber
+                        </button>
+                      ) : (
+                        <div className="w-8 h-8 border-b-2 border-l-2 border-green rounded-full animate-spin	"></div>
+                      )}
                     </div>
                   </form>
                 </>
