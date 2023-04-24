@@ -21,7 +21,6 @@ export default function Home() {
   const [showFailed, setShowFailed] = useState<boolean | null>(true);
   const [raffledItems, setRaffledItems] = useState<Raffle[]>([]);
   const [walletAddress, setWalletAddress] = useState<string>("");
-  const [walletButton, setWalletButon] = useState<boolean | null>(false);
   const [isLoading, setIsLoading] = useState<boolean | null>(false);
   const [hash, setHash] = useState<string>("");
   const [confirmedTransfer, setConfirmedTransfer] = useState<boolean>(false);
@@ -41,6 +40,7 @@ export default function Home() {
     setQuizStarted(false);
     setConfirmedTransfer(false);
     setCurrentQuestionIndex(0);
+    setIsAnswerCorrect(null);
   }
 
   function getRandonQuestions() {
@@ -71,7 +71,7 @@ export default function Home() {
       setIsAnswerCorrect(false);
       setCurrentQuestionIndex(0);
       setSelectedOption(null);
-      setShowFailed(false);
+      setShowFailed(true);
       setQuizStarted(false);
     }
   }
@@ -80,22 +80,17 @@ export default function Home() {
     event
   ) => {
     event.preventDefault();
-    if (walletAddress.length !== 42) {
-      setWalletButon(false);
-    } else {
-      console.log("Enviei");
-      try {
-        setIsLoading(true);
-        const res = await mintToken(walletAddress);
-        setHash(res.hash);
-        console.log(hash);
-        setWalletButon(true);
-        setWalletAddress("");
-      } catch (error) {
-      } finally {
-        setConfirmedTransfer(true);
-        setIsLoading(false);
-      }
+
+    try {
+      setIsLoading(true);
+      const res = await mintToken(walletAddress);
+      setHash(res.hash);
+      console.log(hash);
+      setWalletAddress("");
+    } catch (error) {
+    } finally {
+      setConfirmedTransfer(true);
+      setIsLoading(false);
     }
   };
 
@@ -129,7 +124,7 @@ export default function Home() {
               <p className="text-lg mb-4">
                 Responda todas as perguntas corretamente para ganhar um token
               </p>
-              {!showFailed ? (
+              {showFailed ? (
                 <p className="mb-4 text-center p-4 rounded bg-red">
                   Resposta Errada. Tente novamente
                 </p>
@@ -243,9 +238,9 @@ export default function Home() {
                           {!isLoading ? (
                             <button
                               className={`p-2 bg-green text-purple font-semibold rounded ${
-                                !walletButton
-                                  ? "opacity-50 cursor-not-allowed"
-                                  : "opacity-100 cursor-pointer"
+                                walletAddress.length == 42
+                                  ? ""
+                                  : "opacity-50 cursor-not-allowed"
                               }`}
                               type="submit"
                               disabled={walletAddress.length !== 42}
