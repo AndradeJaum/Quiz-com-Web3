@@ -41,6 +41,8 @@ export default function Home() {
     setConfirmedTransfer(false);
     setCurrentQuestionIndex(0);
     setIsAnswerCorrect(null);
+    setSelectedOption(null);
+    setShowFailed(false);
   }
 
   function getRandonQuestions() {
