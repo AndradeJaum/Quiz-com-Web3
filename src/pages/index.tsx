@@ -16,7 +16,7 @@ interface Raffle {
 export default function Home() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [quizStarted, setQuizStarted] = useState(false);
+  const [quizStarted, setQuizStarted] = useState<boolean>(false);
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
   const [showFailed, setShowFailed] = useState<boolean | null>(true);
   const [raffledItems, setRaffledItems] = useState<Raffle[]>([]);
@@ -24,6 +24,7 @@ export default function Home() {
   const [walletButton, setWalletButon] = useState<boolean | null>(false);
   const [isLoading, setIsLoading] = useState<boolean | null>(false);
   const [hash, setHash] = useState<string>("");
+  const [confirmedTransfer, setConfirmedTransfer] = useState<boolean>(false);
 
   const handleOptionSelect = (option: string): void => {
     setSelectedOption(option);
@@ -34,6 +35,12 @@ export default function Home() {
     setRaffledItems(raffledItems);
     setQuizStarted(true);
     setIsAnswerCorrect(null);
+  }
+
+  function handleReset(): void {
+    setQuizStarted(false);
+    setConfirmedTransfer(false);
+    setCurrentQuestionIndex(0);
   }
 
   function getRandonQuestions() {
@@ -81,11 +88,12 @@ export default function Home() {
         setIsLoading(true);
         const res = await mintToken(walletAddress);
         setHash(res.hash);
-        console.log(walletAddress);
+        console.log(hash);
         setWalletButon(true);
         setWalletAddress("");
       } catch (error) {
       } finally {
+        setConfirmedTransfer(true);
         setIsLoading(false);
       }
     }
@@ -137,95 +145,120 @@ export default function Home() {
             </div>
           ) : (
             <div className="flex flex-col ">
-              <div className="flex justify-between mb-4">
-                <h2 className="text-2xl font-bold">Perguntas</h2>
-                <p className="text-xs my-auto text-green">
-                  {currentQuestionIndex} / {raffledItems.length}
-                </p>
-              </div>
-
-              {currentQuestionIndex < raffledItems.length ? (
+              {confirmedTransfer ? (
                 <>
-                  <p className="mb-4">
-                    {raffledItems[currentQuestionIndex].question}
-                  </p>
-                  <ul className="flex flex-col gap-4">
-                    {raffledItems[currentQuestionIndex].options.map(
-                      (option, index) => (
-                        <li
-                          key={index}
-                          className={`border border-green text-green hover:bg-purpleHover hover:text-purple font-bold py-2 px-4 rounded ${
-                            selectedOption === option
-                              ? "bg-purpleHover text-purple"
-                              : ""
-                          }`}
-                          onClick={() => handleOptionSelect(option)}
-                        >
-                          {option}
-                        </li>
-                      )
-                    )}
-                  </ul>
-                  <button
-                    className={`border-2 border-green text-green hover:bg-purpleHover hover:text-purple font-bold py-2 px-4 rounded mt-4 ${
-                      selectedOption ? "" : "opacity-50 cursor-not-allowed"
-                    }`}
-                    onClick={() => {
-                      if (selectedOption) {
-                        handleValidateAnswer(
-                          currentQuestionIndex,
-                          raffledItems[currentQuestionIndex].options.indexOf(
-                            selectedOption
-                          )
-                        );
-                        setSelectedOption(null);
-                      }
-                      setIsAnswerCorrect(null);
-                    }}
-                    disabled={!selectedOption}
-                  >
-                    PRÓXIMA PERGUNTA
-                  </button>
+                  <div className="flex flex-col w-full">
+                    <h3 className="text-2xl font-bold mb-4 m-auto">
+                      Transferência enviada com sucesso!
+                    </h3>
+                    <p className="mb-4">Hash:</p>
+                    <div className="bg-green text-purple p-4 rounded">
+                      <p className="break-words	">{hash}</p>
+                    </div>
+                    <form onSubmit={handleReset} className="flex justify-end">
+                      <button
+                        type="submit"
+                        className="border-2 border-green text-green hover:bg-purpleHover hover:text-purple font-bold py-2 px-4 rounded mt-4"
+                      >
+                        Home
+                      </button>
+                    </form>
+                  </div>
                 </>
               ) : (
                 <>
-                  <div className="border-b border-green w-full mb-8">
-                    <p className=" py-4">Parabéns! Você concluiu o quiz.</p>
+                  <div className="flex justify-between mb-4">
+                    <h2 className="text-2xl font-bold">Perguntas</h2>
+                    <p className="text-xs my-auto text-green">
+                      {currentQuestionIndex} / {raffledItems.length}
+                    </p>
                   </div>
-                  <form onSubmit={handleValidateWallet}>
-                    <div>
+
+                  {currentQuestionIndex < raffledItems.length ? (
+                    <>
                       <p className="mb-4">
-                        Insira o endereço da sua carteira para receber o token
+                        {raffledItems[currentQuestionIndex].question}
                       </p>
-                      <input
-                        type="text"
-                        placeholder="Wallet address"
-                        className="w-full p-2 rounded outline-none bg-purple border border-green mb-4"
-                        value={walletAddress}
-                        onChange={(event) => {
-                          setWalletAddress(event.target.value);
+                      <ul className="flex flex-col gap-4">
+                        {raffledItems[currentQuestionIndex].options.map(
+                          (option, index) => (
+                            <li
+                              key={index}
+                              className={`border border-green text-green hover:bg-purpleHover hover:text-purple font-bold py-2 px-4 rounded ${
+                                selectedOption === option
+                                  ? "bg-purpleHover text-purple"
+                                  : ""
+                              }`}
+                              onClick={() => handleOptionSelect(option)}
+                            >
+                              {option}
+                            </li>
+                          )
+                        )}
+                      </ul>
+                      <button
+                        className={`border-2 border-green text-green hover:bg-purpleHover hover:text-purple font-bold py-2 px-4 rounded mt-4 ${
+                          selectedOption ? "" : "opacity-50 cursor-not-allowed"
+                        }`}
+                        onClick={() => {
+                          if (selectedOption) {
+                            handleValidateAnswer(
+                              currentQuestionIndex,
+                              raffledItems[
+                                currentQuestionIndex
+                              ].options.indexOf(selectedOption)
+                            );
+                            setSelectedOption(null);
+                          }
+                          setIsAnswerCorrect(null);
                         }}
-                        required
-                      />
-                    </div>
-                    <div className="flex justify-end">
-                      {!isLoading ? (
-                        <button
-                          className={`p-2 bg-green text-purple font-semibold rounded ${
-                            !walletButton
-                              ? "opacity-50 cursor-not-allowed"
-                              : "opacity-100 cursor-pointer"
-                          }`}
-                          type="submit"
-                          disabled={walletAddress.length !== 42}
-                        >
-                          Receber
-                        </button>
-                      ) : (
-                        <div className="w-8 h-8 border-b-2 border-l-2 border-green rounded-full animate-spin	"></div>
-                      )}
-                    </div>
-                  </form>
+                        disabled={!selectedOption}
+                      >
+                        PRÓXIMA PERGUNTA
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="border-b border-green w-full mb-8">
+                        <p className=" py-4">Parabéns! Você concluiu o quiz.</p>
+                      </div>
+                      <form onSubmit={handleValidateWallet}>
+                        <div>
+                          <p className="mb-4">
+                            Insira o endereço da sua carteira para receber o
+                            token
+                          </p>
+                          <input
+                            type="text"
+                            placeholder="Wallet address"
+                            className="w-full p-2 rounded outline-none bg-purple border border-green mb-4"
+                            value={walletAddress}
+                            onChange={(event) => {
+                              setWalletAddress(event.target.value);
+                            }}
+                            required
+                          />
+                        </div>
+                        <div className="flex justify-end">
+                          {!isLoading ? (
+                            <button
+                              className={`p-2 bg-green text-purple font-semibold rounded ${
+                                !walletButton
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : "opacity-100 cursor-pointer"
+                              }`}
+                              type="submit"
+                              disabled={walletAddress.length !== 42}
+                            >
+                              Receber
+                            </button>
+                          ) : (
+                            <div className="w-8 h-8 border-b-2 border-l-2 border-green rounded-full animate-spin	"></div>
+                          )}
+                        </div>
+                      </form>
+                    </>
+                  )}
                 </>
               )}
             </div>
