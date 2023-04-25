@@ -1,5 +1,5 @@
 import { Inter } from "next/font/google";
-import { questions } from "./questions";
+import { questions } from "../components/questions";
 import React, { useState } from "react";
 import Link from "next/link";
 import { mintToken } from "../lib/api";
