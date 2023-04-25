@@ -18,7 +18,7 @@ export default function Home() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [quizStarted, setQuizStarted] = useState<boolean>(false);
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
-  const [showFailed, setShowFailed] = useState<boolean | null>(true);
+  const [showFailed, setShowFailed] = useState<boolean | null>(false);
   const [raffledItems, setRaffledItems] = useState<Raffle[]>([]);
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean | null>(false);
