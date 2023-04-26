@@ -11,8 +11,9 @@ O jogo é composto por um conjunto de perguntas e respostas de conhecimentos ger
 
 ## Techs
 
-React.JS
-Next.JS
-Tailwind CSS
-Cryptum SDK
-
+<ul>
+<li>React.JS</il>
+<li>Next.JS</il>
+<li>Tailwind CSS</il>
+<li>Cryptum SDK</il>
+</ul>
