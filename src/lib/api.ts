@@ -1,5 +1,5 @@
 export async function mintToken(address: string) {
-  const res = await fetch("http://18.230.194.240:8000/mintToken", {
+  const res = await fetch("https://api.joaovitorandrade.me/mintToken", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
