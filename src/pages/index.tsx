@@ -3,6 +3,7 @@ import { questions } from "../components/questions";
 import React, { useState } from "react";
 import Link from "next/link";
 import { mintToken } from "../lib/api";
+import { ArrowRightIcon, FaceIcon } from "@radix-ui/react-icons";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -148,23 +149,28 @@ export default function Home() {
                     <h3 className="text-2xl font-bold mb-4 m-auto">
                       Transferência enviada com sucesso!
                     </h3>
-                    <Link
-                      href="https://alfajores.celoscan.io/"
-                      target="_blank"
-                      className="mb-4"
-                    >
-                      Hash:
-                    </Link>
+                    <p className="mt-4 font-semibold">PROTOCOLO CELO</p>
+                    <p className="mb-4">Hash:</p>
                     <div className="bg-green text-purple p-4 rounded">
                       <p className="break-words	">{hash}</p>
                     </div>
-                    <form onSubmit={handleReset} className="flex justify-end">
+                    <form
+                      onSubmit={handleReset}
+                      className="flex justify-between"
+                    >
                       <button
                         type="submit"
                         className="border-2 border-green text-green hover:bg-purpleHover hover:text-purple font-bold py-2 px-4 rounded mt-4"
                       >
                         Home
                       </button>
+                      <Link
+                        href="https://alfajores.celoscan.io/"
+                        target="_blank"
+                        className="flex gap-2 border-2 border-green text-green hover:bg-purpleHover hover:text-purple font-bold py-2 px-4 rounded mt-4"
+                      >
+                        CELO <ArrowRightIcon className="m-auto" />
+                      </Link>
                     </form>
                   </div>
                 </>
