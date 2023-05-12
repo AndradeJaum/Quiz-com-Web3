@@ -148,7 +148,13 @@ export default function Home() {
                     <h3 className="text-2xl font-bold mb-4 m-auto">
                       Transferência enviada com sucesso!
                     </h3>
-                    <p className="mb-4">Hash:</p>
+                    <Link
+                      href="https://alfajores.celoscan.io/"
+                      target="_blank"
+                      className="mb-4"
+                    >
+                      Hash:
+                    </Link>
                     <div className="bg-green text-purple p-4 rounded">
                       <p className="break-words	">{hash}</p>
                     </div>
@@ -223,7 +229,7 @@ export default function Home() {
                         <div>
                           <p className="mb-4">
                             Insira o endereço da sua carteira para receber o
-                            token
+                            token do protocolo CELO
                           </p>
                           <input
                             type="text"
