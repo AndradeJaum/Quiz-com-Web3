@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { mintToken } from "../lib/api";
 import { ArrowRightIcon, FaceIcon } from "@radix-ui/react-icons";
+import error from "next/error";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -87,6 +88,7 @@ export default function Home() {
     try {
       setIsLoading(true);
       const res = await mintToken(walletAddress);
+      console.log(res);
       setHash(res.hash);
       console.log(hash);
       setWalletAddress("");
@@ -100,8 +102,8 @@ export default function Home() {
   return (
     <main className="bg-purpleDark w-screen min-h-screen">
       <header className="bg-purple w-full p-8 border-b border-purpleHover">
-        <nav className="flex gap-4 list-none justify-center">
-          <li className="text-lg font-semibold hover:border-b hover:border-b-purpleHover">
+        <nav className="flex gap-4 list-none justify-center ">
+          <li className="text-lg max-[640px]:text-base font-semibold hover:border-b hover:border-b-purpleHover">
             <Link
               href="https://www.linkedin.com/in/joao-vitorandrade/"
               target="_blank"
@@ -109,7 +111,7 @@ export default function Home() {
               LINKEDIN
             </Link>
           </li>
-          <li className="text-lg font-semibold hover:border-b hover:border-b-purpleHover">
+          <li className="text-lg max-[640px]:text-base font-semibold hover:border-b hover:border-b-purpleHover">
             <Link
               href="https://github.com/AndradeJaum/Quiz-com-Web3"
               target="_blank"
@@ -120,11 +122,13 @@ export default function Home() {
         </nav>
       </header>
       <section className="my-12">
-        <div className="my-8 bg-purple w-1/2 p-8 rounded-md mx-auto">
+        <div className="my-8 bg-purple w-1/2 max-[640px]:w-4/5 p-8 rounded-md mx-auto">
           {!quizStarted ? (
-            <div className="flex flex-col items-center">
-              <h1 className="text-3xl font-bold mb-4">QUIZ DO MILHÃO</h1>
-              <p className="text-lg mb-4">
+            <div className="flex flex-col items-center text-center justify-center">
+              <h1 className="text-3xl font-bold mb-4 max-[640px]:text-xl ">
+                QUIZ DO MILHÃO
+              </h1>
+              <p className="text-lg mb-4 max-[640px]:text-sm">
                 Responda todas as perguntas corretamente para ganhar um token
               </p>
               {showFailed ? (
