@@ -4,8 +4,9 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { mintToken } from "../lib/api";
 import { ArrowRightIcon, FaceIcon } from "@radix-ui/react-icons";
+import error from "next/error";
 
-// const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] });
 
 interface Raffle {
   id: number;
